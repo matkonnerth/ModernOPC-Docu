@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using OPC UA Methods &mdash; ModernOPC 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ModernOPC
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../building.html">Building ModernOPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ModernOPC</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Using OPC UA Methods</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorials/methods.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-opc-ua-methods">
+<h1>Using OPC UA Methods<a class="headerlink" href="#using-opc-ua-methods" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how to add method nodes and connect it to the implementation.
+Free Functions, member functions and lambdas are supported.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;opc/Server.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;functional&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opc/nodes/ObjectNode.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+
+<span class="n">using</span> <span class="n">opc</span><span class="o">::</span><span class="n">QualifiedName</span><span class="p">;</span>
+<span class="k">struct</span> <span class="n">Callable</span>
+<span class="p">{</span>
+    <span class="n">Callable</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span> <span class="o">:</span> <span class="n">state</span><span class="p">{</span><span class="n">s</span><span class="p">}</span> <span class="p">{}</span>
+    <span class="kt">int</span> <span class="n">run</span><span class="p">(</span><span class="kt">int</span> <span class="n">test</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">state</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">12</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="nl">private</span><span class="p">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">state</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">opc</span><span class="o">::</span><span class="n">Server</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">root</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">getObjectsFolder</span><span class="p">();</span>
+
+    <span class="n">Callable</span> <span class="n">c1</span><span class="p">{</span><span class="s">&quot;Hello&quot;</span><span class="p">};</span>
+    <span class="n">Callable</span> <span class="n">c2</span><span class="p">{</span><span class="s">&quot;world&quot;</span><span class="p">};</span>
+
+    <span class="c1">//add object with memberfunction and bind it to implementation</span>
+    <span class="n">root</span><span class="o">-&gt;</span><span class="n">addObject</span><span class="p">(</span><span class="n">opc</span><span class="o">::</span><span class="n">NodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">),</span> <span class="n">QualifiedName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Hello&quot;</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">c1</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="n">addMethod</span><span class="p">(</span><span class="n">opc</span><span class="o">::</span><span class="n">NodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;doIt&quot;</span><span class="p">),</span> <span class="n">QualifiedName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;run&quot;</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">Callable</span><span class="o">::</span><span class="n">run</span><span class="p">);</span>
+
+    <span class="c1">//same here</span>
+    <span class="n">root</span><span class="o">-&gt;</span><span class="n">addObject</span><span class="p">(</span><span class="n">opc</span><span class="o">::</span><span class="n">NodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;world&quot;</span><span class="p">),</span> <span class="n">QualifiedName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;World&quot;</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">c2</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="n">addMethod</span><span class="p">(</span><span class="n">opc</span><span class="o">::</span><span class="n">NodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;doIt2&quot;</span><span class="p">),</span> <span class="n">QualifiedName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;run&quot;</span><span class="p">),</span>
+                    <span class="o">&amp;</span><span class="n">Callable</span><span class="o">::</span><span class="n">run</span><span class="p">);</span>
+
+    <span class="c1">//add a MethodNode and bind it to a lambda function</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">function</span> <span class="n">f</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">};</span> <span class="p">};</span>
+    <span class="n">root</span><span class="o">-&gt;</span><span class="n">addMethod</span><span class="p">(</span><span class="n">opc</span><span class="o">::</span><span class="n">NodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;doIt3&quot;</span><span class="p">),</span> <span class="n">QualifiedName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;getVector&quot;</span><span class="p">),</span> <span class="n">f</span><span class="p">);</span>
+
+    <span class="c1">// add a MethodNode and bind it to a lambda function</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">function</span> <span class="n">fVoidIntInt</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;};</span>
+    <span class="n">root</span><span class="o">-&gt;</span><span class="n">addMethod</span><span class="p">(</span><span class="n">opc</span><span class="o">::</span><span class="n">NodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;doIt4&quot;</span><span class="p">),</span> <span class="n">QualifiedName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;getVector&quot;</span><span class="p">),</span> <span class="n">fVoidIntInt</span><span class="p">);</span>
+
+    <span class="n">s</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Matthias Konnerth
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
